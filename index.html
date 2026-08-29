@@ -1,88 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="FIP治療中の猫の投薬・体調・検査記録を家族で共有するアプリの試作画面">
-  <title>FIP治療記録 | わが家の猫</title>
-  <style>
-    :root { --bg:#f6f7f9; --card:#fff; --text:#202124; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb; --ok:#15803d; --warn:#b45309; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    header { background:var(--card); border-bottom:1px solid var(--line); padding:18px 16px; position:sticky; top:0; z-index:2; }
-    header h1 { max-width:760px; margin:0 auto; font-size:1.2rem; }
-    main { max-width:760px; margin:0 auto; padding:16px; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:14px; }
-    .hero { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-    h2 { margin:0 0 12px; font-size:1.05rem; }
-    h3 { margin:0; font-size:1rem; }
-    p { line-height:1.6; }
-    .muted { color:var(--muted); }
-    .day { color:var(--accent); font-weight:700; }
-    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-    .metric { border:1px solid var(--line); border-radius:12px; padding:12px; }
-    .metric strong { display:block; font-size:1.15rem; margin-top:4px; }
-    .medication { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
-    .medication:last-child { border-bottom:0; }
-    .status { color:var(--muted); font-size:.9rem; margin-top:4px; }
-    button { border:0; border-radius:10px; padding:11px 14px; background:var(--accent); color:#fff; font-weight:700; font-size:.95rem; cursor:pointer; }
-    button:focus-visible { outline:3px solid #93c5fd; outline-offset:2px; }
-    .ok { color:var(--ok); font-weight:700; }
-    .warn { color:var(--warn); font-weight:700; }
-    .actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .secondary { background:#eef2ff; color:#1e40af; }
-    @media (max-width:520px) { .hero { flex-direction:column; } .actions,.grid { grid-template-columns:1fr; } .medication { align-items:flex-start; } button { width:100%; } }
-  </style>
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FIP治療記録</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#202124;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--ok:#15803d;--warn:#b45309}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}header{background:#fff;border-bottom:1px solid var(--line);padding:16px;position:sticky;top:0;z-index:2}header h1,main{max-width:760px;margin:auto}header h1{font-size:1.2rem}main{padding:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}.hero{display:flex;justify-content:space-between;gap:10px}.day{color:var(--accent);font-weight:700}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px}.metric strong{display:block;font-size:1.15rem;margin-top:4px}.med{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.med:last-child{border:0}button{border:0;border-radius:10px;padding:11px 14px;background:var(--accent);color:#fff;font-weight:700;font-size:.95rem}button:disabled{background:#d1d5db}.ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}.form{display:grid;gap:10px}.form label{font-weight:600}.form input,.form select,.form textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;font:inherit}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.muted{color:var(--muted);font-size:.9rem}ul{padding-left:20px}@media(max-width:520px){.hero{flex-direction:column}.grid,.actions{grid-template-columns:1fr}.med{align-items:flex-start}button{width:100%}}
+</style></head>
 <body>
-  <header><h1>🐱 FIP治療記録</h1></header>
-  <main>
-    <section class="card">
-      <div class="hero">
-        <div><h2>ミケ</h2><div class="muted">FIP治療記録（試作）</div></div>
-        <div class="day">Day 12 / 84</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>今日の状態</h2>
-      <div class="grid">
-        <div class="metric">⚖️ 体重<strong>3.82 kg</strong></div>
-        <div class="metric">🌡️ 体温<strong>38.4 ℃</strong></div>
-        <div class="metric">🍚 食欲<strong>◎</strong></div>
-        <div class="metric">❤️ 元気<strong>○</strong></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>💊 今日の投薬</h2>
-      <div class="medication">
-        <div><h3>08:00　GS-441524</h3><div class="status ok">✅ 投薬済み — お母さん（08:03）</div></div>
-        <button type="button" disabled>投薬済み</button>
-      </div>
-      <div class="medication">
-        <div><h3>20:00　GS-441524</h3><div class="status warn">⬜ 未投薬</div></div>
-        <button type="button">投薬した</button>
-      </div>
-      <p class="muted">※薬の種類・量は獣医師から指示された内容を記録するための項目です。</p>
-    </section>
-
-    <section class="card">
-      <h2>🩸 最新の検診</h2>
-      <p><strong>2026/08/20</strong></p>
-      <p class="muted">血液検査の数値・獣医師からの説明・検査結果写真を記録できるようにします。</p>
-      <div class="actions"><button class="secondary" type="button">検査記録を見る</button><button class="secondary" type="button">写真を見る</button></div>
-    </section>
-
-    <section class="card">
-      <h2>📊 治療の記録</h2>
-      <div class="actions"><button class="secondary" type="button">体重の推移</button><button class="secondary" type="button">体調日記</button></div>
-    </section>
-
-    <section class="card">
-      <h2>👨‍👩‍👧 家族共有</h2>
-      <p>家族それぞれが「誰が・いつ・何を投薬したか」を確認できる仕組みを実装予定です。</p>
-    </section>
-  </main>
-</body>
-</html>
+<header><h1>🐱 FIP治療記録</h1></header>
+<main>
+<section class="card"><div class="hero"><div><h2 id="catName">ミケ</h2><div class="muted">家族で共有する治療記録・試作版</div></div><div class="day">Day <span id="day">12</span> / 84</div></div></section>
+<section class="card"><h2>今日の状態</h2><div class="grid"><div class="metric">⚖️ 体重<strong id="weightView">3.82 kg</strong></div><div class="metric">🌡️ 体温<strong id="tempView">38.4 ℃</strong></div><div class="metric">🍚 食欲<strong id="appetiteView">◎</strong></div><div class="metric">❤️ 元気<strong id="energyView">○</strong></div></div></section>
+<section class="card"><h2>💊 今日の投薬</h2><div class="med"><div><strong>08:00　GS-441524</strong><div class="muted ok">✅ 投薬済み — お母さん</div></div><button disabled>投薬済み</button></div><div class="med"><div><strong>20:00　GS-441524</strong><div id="eveningStatus" class="muted warn">⬜ 未投薬</div></div><button id="doseBtn" onclick="recordDose()">投薬した</button></div><p class="muted">薬名・剤形・量は獣医師から指示された内容を記録する用途です。アプリは投与量を自動決定しません。</p></section>
+<section class="card"><h2>📝 今日の記録</h2><div class="form"><label>体重（kg）<input id="weight" type="number" step="0.01" min="0"></label><label>体温（℃）<input id="temp" type="number" step="0.1" min="0"></label><label>食欲<select id="appetite"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label><label>元気<select id="energy"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label><label>メモ<textarea id="memo" rows="3" placeholder="今日の様子など"></textarea></label><button onclick="saveDaily()">今日の記録を保存</button></div><p id="saveMessage" class="muted"></p></section>
+<section class="card"><h2>🩸 検診・血液検査</h2><p class="muted">検査値と獣医師からの説明を保存する欄を今後追加します。</p><div class="actions"><button type="button" onclick="alert('次のバージョンで検査記録を追加します')">検査記録</button><button type="button" onclick="document.getElementById('photo').click()">📷 写真を選ぶ</button></div><input id="photo" type="file" accept="image/*" capture="environment" hidden onchange="showPhoto(event)"><img id="photoPreview" alt="検査結果プレビュー" style="display:none;width:100%;margin-top:10px;border-radius:12px"><p id="photoMessage" class="muted"></p></section>
+<section class="card"><h2>📈 記録履歴</h2><ul id="history"><li>初期データ：体重 3.82kg、体温 38.4℃</li></ul></section>
+</main>
+<script>
+const key='fip-demo';
+function load(){const d=JSON.parse(localStorage.getItem(key)||'{}');if(d.weight){weight.value=d.weight;weightView.textContent=d.weight+' kg'}if(d.temp){temp.value=d.temp;tempView.textContent=d.temp+' ℃'}if(d.appetite){appetite.value=d.appetite;appetiteView.textContent=d.appetite}if(d.energy){energy.value=d.energy;energyView.textContent=d.energy}if(d.memo)memo.value=d.memo;if(d.dose){eveningStatus.textContent='✅ 投薬済み — '+d.dose.user+'（'+d.dose.time+'）';eveningStatus.className='muted ok';doseBtn.disabled=true;doseBtn.textContent='投薬済み'}}
+function saveDaily(){const d={weight:weight.value,temp:temp.value,appetite:appetite.value,energy:energy.value,memo:memo.value};localStorage.setItem(key,JSON.stringify({...JSON.parse(localStorage.getItem(key)||'{}'),...d}));weightView.textContent=(weight.value||'—')+' kg';tempView.textContent=(temp.value||'—')+' ℃';appetiteView.textContent=appetite.value;energyView.textContent=energy.value;saveMessage.textContent='✅ このiPhoneのブラウザに保存しました（試作版）';}
+function recordDose(){const user=prompt('投薬した人の名前を入力してください','お母さん');if(!user)return;const now=new Date();const time=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});const old=JSON.parse(localStorage.getItem(key)||'{}');localStorage.setItem(key,JSON.stringify({...old,dose:{user,time}}));eveningStatus.textContent='✅ 投薬済み — '+user+'（'+time+'）';eveningStatus.className='muted ok';doseBtn.disabled=true;doseBtn.textContent='投薬済み';}
+function showPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{photoPreview.src=r.result;photoPreview.style.display='block';photoMessage.textContent='📷 写真を選択しました。この試作版では端末内のプレビューのみです。';};r.readAsDataURL(f)}
+load();
+</script>
+</body></html>
