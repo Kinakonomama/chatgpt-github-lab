@@ -1,0 +1,9 @@
+{
+  "name": "FIP治療記録",
+  "short_name": "FIP記録",
+  "lang": "ja",
+  "start_url": "./",
+  "display": "standalone",
+  "description": "FIP治療中の猫の投薬・体調・検査記録を管理するアプリの試作版",
+  "icons": []
+}
