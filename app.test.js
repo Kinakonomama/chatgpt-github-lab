@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { state, treatmentDay, canAdminister, administerMedication } = require('./app.js');
+const { state, treatmentDay, canAdminister, administerMedication } = require('./app.cjs');
 
 test('治療日数を計算できる', () => {
   assert.equal(treatmentDay('2026-08-01', new Date('2026-08-29T12:00:00')), 29);
