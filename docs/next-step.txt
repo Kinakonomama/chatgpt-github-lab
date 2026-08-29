@@ -1,0 +1,1 @@
+Next implementation step: authentication and cloud database integration for family sharing.
