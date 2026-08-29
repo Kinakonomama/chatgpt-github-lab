@@ -17,11 +17,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
 
-      - name: Check index.html exists
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Check mobile web app exists
         run: test -f index.html
-
-      - name: Check FIP app title exists
-        run: grep -q "FIP" index.html
-
-      - name: Report success
-        run: echo "FIP app basic tests passed."
