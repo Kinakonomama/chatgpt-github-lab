@@ -1,0 +1,27 @@
+name: Test FIP App
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Check index.html exists
+        run: test -f index.html
+
+      - name: Check FIP app title exists
+        run: grep -q "FIP" index.html
+
+      - name: Report success
+        run: echo "FIP app basic tests passed."
