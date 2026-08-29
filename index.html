@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>わが家の投薬管理</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #222;
+    }
+
+    header {
+      background: #fff;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .medication {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .medication:last-child {
+      border-bottom: none;
+    }
+
+    .status {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      background: #222;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐾 わが家の投薬管理</h1>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>今日の投薬</h2>
+      <p>動物：<strong>ポチ</strong></p>
+
+      <div class="medication">
+        <div>
+          <strong>08:00　薬A</strong>
+          <div class="status">まだ投薬されていません</div>
+        </div>
+        <button type="button">投薬した</button>
+      </div>
+
+      <div class="medication">
+        <div>
+          <strong>20:00　薬A</strong>
+          <div class="status">まだ投薬されていません</div>
+        </div>
+        <button type="button">投薬した</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>このアプリで目指すこと</h2>
+      <p>家族で投薬状況を共有し、「誰が・いつ・何を投薬したか」を確認できるようにします。</p>
+    </section>
+  </main>
+</body>
+</html>
