@@ -3,98 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>わが家の投薬管理</title>
+  <meta name="description" content="FIP治療中の猫の投薬・体調・検査記録を家族で共有するアプリの試作画面">
+  <title>FIP治療記録 | わが家の猫</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      background: #f5f7fa;
-      color: #222;
-    }
-
-    header {
-      background: #fff;
-      padding: 20px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
-
-    .medication {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .medication:last-child {
-      border-bottom: none;
-    }
-
-    .status {
-      color: #666;
-      font-size: 0.9rem;
-    }
-
-    button {
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      background: #222;
-      color: #fff;
-      font-size: 1rem;
-    }
-
-    button:hover {
-      opacity: 0.85;
-    }
+    :root { --bg:#f6f7f9; --card:#fff; --text:#202124; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb; --ok:#15803d; --warn:#b45309; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    header { background:var(--card); border-bottom:1px solid var(--line); padding:18px 16px; position:sticky; top:0; z-index:2; }
+    header h1 { max-width:760px; margin:0 auto; font-size:1.2rem; }
+    main { max-width:760px; margin:0 auto; padding:16px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:14px; }
+    .hero { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    h2 { margin:0 0 12px; font-size:1.05rem; }
+    h3 { margin:0; font-size:1rem; }
+    p { line-height:1.6; }
+    .muted { color:var(--muted); }
+    .day { color:var(--accent); font-weight:700; }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .metric { border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .metric strong { display:block; font-size:1.15rem; margin-top:4px; }
+    .medication { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
+    .medication:last-child { border-bottom:0; }
+    .status { color:var(--muted); font-size:.9rem; margin-top:4px; }
+    button { border:0; border-radius:10px; padding:11px 14px; background:var(--accent); color:#fff; font-weight:700; font-size:.95rem; cursor:pointer; }
+    button:focus-visible { outline:3px solid #93c5fd; outline-offset:2px; }
+    .ok { color:var(--ok); font-weight:700; }
+    .warn { color:var(--warn); font-weight:700; }
+    .actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .secondary { background:#eef2ff; color:#1e40af; }
+    @media (max-width:520px) { .hero { flex-direction:column; } .actions,.grid { grid-template-columns:1fr; } .medication { align-items:flex-start; } button { width:100%; } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🐾 わが家の投薬管理</h1>
-  </header>
-
+  <header><h1>🐱 FIP治療記録</h1></header>
   <main>
     <section class="card">
-      <h2>今日の投薬</h2>
-      <p>動物：<strong>ポチ</strong></p>
-
-      <div class="medication">
-        <div>
-          <strong>08:00　薬A</strong>
-          <div class="status">まだ投薬されていません</div>
-        </div>
-        <button type="button">投薬した</button>
-      </div>
-
-      <div class="medication">
-        <div>
-          <strong>20:00　薬A</strong>
-          <div class="status">まだ投薬されていません</div>
-        </div>
-        <button type="button">投薬した</button>
+      <div class="hero">
+        <div><h2>ミケ</h2><div class="muted">FIP治療記録（試作）</div></div>
+        <div class="day">Day 12 / 84</div>
       </div>
     </section>
 
     <section class="card">
-      <h2>このアプリで目指すこと</h2>
-      <p>家族で投薬状況を共有し、「誰が・いつ・何を投薬したか」を確認できるようにします。</p>
+      <h2>今日の状態</h2>
+      <div class="grid">
+        <div class="metric">⚖️ 体重<strong>3.82 kg</strong></div>
+        <div class="metric">🌡️ 体温<strong>38.4 ℃</strong></div>
+        <div class="metric">🍚 食欲<strong>◎</strong></div>
+        <div class="metric">❤️ 元気<strong>○</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>💊 今日の投薬</h2>
+      <div class="medication">
+        <div><h3>08:00　GS-441524</h3><div class="status ok">✅ 投薬済み — お母さん（08:03）</div></div>
+        <button type="button" disabled>投薬済み</button>
+      </div>
+      <div class="medication">
+        <div><h3>20:00　GS-441524</h3><div class="status warn">⬜ 未投薬</div></div>
+        <button type="button">投薬した</button>
+      </div>
+      <p class="muted">※薬の種類・量は獣医師から指示された内容を記録するための項目です。</p>
+    </section>
+
+    <section class="card">
+      <h2>🩸 最新の検診</h2>
+      <p><strong>2026/08/20</strong></p>
+      <p class="muted">血液検査の数値・獣医師からの説明・検査結果写真を記録できるようにします。</p>
+      <div class="actions"><button class="secondary" type="button">検査記録を見る</button><button class="secondary" type="button">写真を見る</button></div>
+    </section>
+
+    <section class="card">
+      <h2>📊 治療の記録</h2>
+      <div class="actions"><button class="secondary" type="button">体重の推移</button><button class="secondary" type="button">体調日記</button></div>
+    </section>
+
+    <section class="card">
+      <h2>👨‍👩‍👧 家族共有</h2>
+      <p>家族それぞれが「誰が・いつ・何を投薬したか」を確認できる仕組みを実装予定です。</p>
     </section>
   </main>
 </body>
