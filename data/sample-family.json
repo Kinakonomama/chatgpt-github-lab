@@ -1,0 +1,40 @@
+{
+  "family": {
+    "id": "family-demo",
+    "name": "わが家"
+  },
+  "members": [
+    { "id": "member-1", "name": "お母さん" },
+    { "id": "member-2", "name": "お父さん" }
+  ],
+  "cat": {
+    "id": "cat-demo",
+    "familyId": "family-demo",
+    "name": "ミケ",
+    "species": "猫",
+    "treatmentStartDate": "2026-08-01",
+    "treatmentPlanDays": 84,
+    "weightHistory": [
+      { "date": "2026-08-01", "kg": 3.2 },
+      { "date": "2026-08-15", "kg": 3.48 }
+    ],
+    "temperatureHistory": [
+      { "date": "2026-08-15", "celsius": 38.4 }
+    ]
+  },
+  "medications": [
+    {
+      "id": "med-demo",
+      "catId": "cat-demo",
+      "name": "獣医師指示の薬",
+      "form": "tablet",
+      "amountValue": 1.25,
+      "amountDisplay": "1と1/4錠",
+      "amountUnit": "tablet",
+      "scheduleTimes": ["08:00", "20:00"]
+    }
+  ],
+  "medicationRecords": [],
+  "exams": [],
+  "photos": []
+}
