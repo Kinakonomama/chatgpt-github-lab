@@ -1,0 +1,1 @@
+Kinako MVP implementation will continue on a dedicated feature branch.
