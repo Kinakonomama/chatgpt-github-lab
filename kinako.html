@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff"><title>きなこ 投薬管理</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f7f9;color:#202124;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 16px;z-index:2}main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}.hero{display:flex;justify-content:space-between;gap:12px}.day{font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid #e5e7eb;border-radius:12px;padding:12px}.metric b{display:block;font-size:1.15rem;margin-top:4px}.med{border-top:1px solid #eee;padding:14px 0}.med:first-child{border-top:0}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}button{border:0;border-radius:11px;padding:12px 14px;background:#2563eb;color:#fff;font-weight:800;font-size:1rem}button:disabled{background:#d1d5db}.danger{color:#b45309;font-weight:800}.ok{color:#15803d;font-weight:800}.form{display:grid;gap:10px}.form label{font-weight:700}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:10px;font:inherit}.small{color:#6b7280;font-size:.88rem}.history{margin:0;padding-left:20px}@media(max-width:520px){.hero,.row{flex-direction:column;align-items:stretch}.grid{grid-template-columns:1fr}button{width:100%}}
+</style></head>
+<body>
+<header><strong>🐱 きなこ 投薬管理</strong></header>
+<main>
+<section class="card"><div class="hero"><div><h1 style="margin:0 0 4px">きなこ</h1><div class="small">家族で共有するFIP治療記録</div></div><div class="day">Day <span id="day">1</span> / 82</div></div></section>
+<section class="card"><h2>💊 今日の投薬</h2><div id="meds"></div><p class="small">※薬の量は獣医師から指定された内容を記録します。アプリが投与量を判断することはありません。</p></section>
+<section class="card"><h2>📝 今日の記録</h2><div class="form">
+<label>体重（kg）<input id="weight" type="number" min="0" step="0.01" inputmode="decimal"></label>
+<label>体温（℃）<input id="temp" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<label>食欲<select id="appetite"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label>
+<label>元気<select id="energy"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label>
+<label>メモ<textarea id="memo" rows="3" placeholder="今日の様子"></textarea></label>
+<button onclick="saveDaily()">今日の記録を保存</button><div id="saved" class="small"></div></div></section>
+<section class="card"><h2>⚙️ 投薬予定を設定</h2><div class="form">
+<label>薬名<input id="medName" placeholder="例：GS-441524 / モルヌピラビル"></label>
+<label>剤形<select id="formType"><option>カプセル</option><option>錠剤</option><option>粉薬</option></select></label>
+<label>量<input id="dose" placeholder="例：1錠、1/4錠、0.5g"></label>
+<label>予定時刻<input id="schedule" type="time"></label>
+<button onclick="addMed()">投薬予定を追加</button><div class="small">予定はこの端末に保存されます。家族共有はSupabase接続版で追加します。</div></div></section>
+<section class="card"><h2>📋 最近の記録</h2><ul id="history" class="history"></ul></section>
+</main>
+<script>
+const KEY='kinako-medication-v1';
+const initial={day:1,meds:[],daily:{},history:[]};
+function state(){try{return {...initial,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return {...initial}}}
+function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
+function render(){const s=state();document.getElementById('day').textContent=Math.min(82,Math.max(1,Number(s.day)||1));
+const box=document.getElementById('meds');box.innerHTML='';
+if(!s.meds.length){box.innerHTML='<div class="small">投薬予定がまだありません。「投薬予定を設定」から登録してください。</div>'}
+else s.meds.forEach((m,i)=>{const d=s.daily?.doses?.[i];const el=document.createElement('div');el.className='med';el.innerHTML=`<div class="row"><div><strong>${esc(m.time)}　${esc(m.name)}</strong><div class="small">${esc(m.form)}・${esc(m.dose)}</div><div class="${d?'ok':'danger'}">${d?'✅ 投薬済み — '+esc(d.user)+'（'+esc(d.time)+'）':'⬜ 未投薬'}</div></div><button ${d?'disabled':''} onclick="dose(${i})">${d?'投薬済み':'投薬した'}</button></div>`;box.appendChild(el)});
+const daily=s.daily||{};weight.value=daily.weight||'';temp.value=daily.temp||'';appetite.value=daily.appetite||'◎';energy.value=daily.energy||'◎';memo.value=daily.memo||'';
+const h=document.getElementById('history');h.innerHTML=(s.history||[]).slice(0,20).map(x=>`<li>${esc(x)}</li>`).join('')||'<li class="small">まだ記録はありません</li>';
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addMed(){if(!medName.value.trim()||!dose.value.trim()||!schedule.value){alert('薬名・量・予定時刻を入力してください');return}const s=state();s.meds.push({name:medName.value.trim(),form:formType.value,dose:dose.value.trim(),time:schedule.value});save(s);medName.value='';dose.value='';schedule.value='';render()}
+function dose(i){const s=state();s.daily=s.daily||{};s.daily.doses=s.daily.doses||{};if(s.daily.doses[i]){alert('この投薬予定はすでに投薬済みです。二重記録を防ぐため変更しません。');return}const user=prompt('投薬した人の名前を入力してください');if(!user)return;const now=new Date();const time=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});s.daily.doses[i]={user:user.trim(),time};s.history=s.history||[];s.history.unshift(`${now.toLocaleDateString('ja-JP')} ${time} 投薬：${s.meds[i].name} ${s.meds[i].dose} — ${user.trim()}`);save(s);render()}
+function saveDaily(){const s=state();s.daily=s.daily||{};s.daily.weight=weight.value;s.daily.temp=temp.value;s.daily.appetite=appetite.value;s.daily.energy=energy.value;s.daily.memo=memo.value;save(s);document.getElementById('saved').textContent='✅ この端末に保存しました';render()}
+render();
+</script></body></html>
