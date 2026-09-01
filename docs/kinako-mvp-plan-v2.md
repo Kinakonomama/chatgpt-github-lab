@@ -1,0 +1,1 @@
+Kinako medication MVP: 82-day tracking, medication schedule, administered time/person, duplicate prevention, weight, temperature, condition, notes. Vet-directed dose recording only.
