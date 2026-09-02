@@ -19,7 +19,7 @@ export function createMedication({ name, form, dose, unit = '', scheduledTime })
   };
 }
 
-export function createDoseRecord({ medicationName, scheduledTime, user, administeredAt }) {
+export function createDoseRecord({ medicationName, scheduledTime, user, administeredAt, dateKey }) {
   if (!medicationName?.trim() || !scheduledTime?.trim() || !user?.trim() || !administeredAt?.trim()) {
     throw new Error('投薬記録には薬名・予定時刻・実施者・実施時刻が必要です');
   }
@@ -27,7 +27,8 @@ export function createDoseRecord({ medicationName, scheduledTime, user, administ
     medicationName: medicationName.trim(),
     scheduledTime: scheduledTime.trim(),
     user: user.trim(),
-    administeredAt: administeredAt.trim()
+    administeredAt: administeredAt.trim(),
+    dateKey: dateKey?.trim()
   };
 }
 
@@ -36,4 +37,30 @@ export function isAlreadyAdministered(records, medicationName, scheduledTime) {
   return records.some(record =>
     record.medicationName === medicationName && record.scheduledTime === scheduledTime
   );
+}
+
+export function formatDateKey(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+    throw new Error('有効な日付が必要です');
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function calculateTreatmentDay(startDateKey, todayKey, totalDays = 82) {
+  const start = new Date(`${startDateKey}T00:00:00`);
+  const today = new Date(`${todayKey}T00:00:00`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(today.getTime())) return 1;
+  const elapsedDays = Math.floor((today - start) / 86400000);
+  return Math.min(totalDays, Math.max(1, elapsedDays + 1));
+}
+
+export function getDailyRecord(recordsByDate, dateKey) {
+  return recordsByDate?.[dateKey] ?? { doses: {} };
+}
+
+export function hasDoseForDate(recordsByDate, dateKey, medicationIndex) {
+  return Boolean(getDailyRecord(recordsByDate, dateKey).doses?.[medicationIndex]);
 }
