@@ -6,40 +6,52 @@
 <meta name="theme-color" content="#ffffff">
 <title>きなこ 投薬管理</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f6f7f9;color:#202124;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 16px;z-index:2}main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}.hero{display:flex;justify-content:space-between;gap:12px}.day{font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{border:1px solid #e5e7eb;border-radius:12px;padding:12px}.metric b{display:block;font-size:1.15rem;margin-top:4px}.med{border-top:1px solid #eee;padding:14px 0}.med:first-child{border-top:0}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}button{border:0;border-radius:11px;padding:12px 14px;background:#2563eb;color:#fff;font-weight:800;font-size:1rem}button:disabled{background:#d1d5db}.danger{color:#b45309;font-weight:800}.ok{color:#15803d;font-weight:800}.form{display:grid;gap:10px}.form label{font-weight:700}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:10px;font:inherit}.small{color:#6b7280;font-size:.88rem}.history{margin:0;padding-left:20px}@media(max-width:520px){.hero,.row{flex-direction:column;align-items:stretch}.grid{grid-template-columns:1fr}button{width:100%}}
+*{box-sizing:border-box}body{margin:0;background:#f6f7f9;color:#202124;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 16px;z-index:2}main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}h1,h2{margin-top:0}.hero{display:flex;justify-content:space-between;gap:12px}.day{font-weight:800}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.med{border-top:1px solid #eee;padding:14px 0}.med:first-child{border-top:0}button{border:0;border-radius:11px;padding:12px 14px;background:#2563eb;color:#fff;font-weight:800;font-size:1rem}button.secondary{background:#374151}button:disabled{background:#d1d5db}.danger{color:#b45309;font-weight:800}.ok{color:#15803d;font-weight:800}.form{display:grid;gap:10px}.form label{font-weight:700}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:10px;font:inherit}.small{color:#6b7280;font-size:.88rem}.history{margin:0;padding-left:20px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.inline{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}@media(max-width:520px){.hero,.row,.inline{grid-template-columns:1fr;flex-direction:column;align-items:stretch}button{width:100%}}
 </style>
 </head>
 <body>
-<header><strong>🐱 きなこ 投薬管理</strong></header>
+<header><strong>きなこ 投薬管理</strong></header>
 <main>
-<section class="card"><div class="hero"><div><h1 style="margin:0 0 4px">きなこ</h1><div class="small">FIP治療記録</div></div><div class="day">Day <span id="day">1</span> / 82</div></div></section>
-<section class="card"><h2>💊 今日の投薬</h2><div id="meds"></div><p class="small">※薬の量は獣医師から指定された内容を記録します。アプリが投与量を判断することはありません。</p></section>
-<section class="card"><h2>📝 今日の記録</h2><div class="form">
+<section class="card"><div class="hero"><div><h1>きなこ</h1><div class="small">FIP治療記録</div><div class="small">今日: <span id="todayLabel"></span></div></div><div class="day">Day <span id="day">1</span> / 82</div></div></section>
+<section class="card"><h2>今日の投薬</h2><div id="meds"></div><p class="small">薬の量は獣医師から指定された内容を記録します。アプリが投与量を判断することはありません。投薬済みの印は日付ごとに分かれ、翌日は未投薬から始まります。</p></section>
+<section class="card"><h2>今日の記録</h2><div class="form">
 <label>体重（kg）<input id="weight" type="number" min="0" step="0.01" inputmode="decimal"></label>
 <label>体温（℃）<input id="temp" type="number" min="0" step="0.1" inputmode="decimal"></label>
 <label>食欲<select id="appetite"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label>
 <label>元気<select id="energy"><option>◎</option><option>○</option><option>△</option><option>×</option></select></label>
 <label>メモ<textarea id="memo" rows="3" placeholder="今日の様子"></textarea></label>
 <button onclick="saveDaily()">今日の記録を保存</button><div id="saved" class="small"></div></div></section>
-<section class="card"><h2>⚙️ 投薬予定を設定</h2><div class="form">
+<section class="card"><h2>投薬予定を設定</h2><div class="form">
 <label>薬名<input id="medName" placeholder="例：GS-441524 / モルヌピラビル"></label>
 <label>剤形<select id="formType"><option>カプセル</option><option>錠剤</option><option>粉薬</option><option>液体</option><option>その他</option></select></label>
 <label>量<input id="dose" placeholder="例：1錠、1/4錠、0.5g"></label>
 <label>予定時刻<input id="schedule" type="time"></label>
 <button onclick="addMed()">投薬予定を追加</button><div class="small">この試作版では記録をこの端末のブラウザに保存します。</div></div></section>
-<section class="card"><h2>📋 最近の記録</h2><ul id="history" class="history"></ul></section>
+<section class="card"><h2>治療設定</h2><div class="form">
+<div class="inline"><label>治療開始日<input id="startDate" type="date"></label><button class="secondary" onclick="saveStartDate()">開始日を保存</button></div>
+<div class="small">開始日から今日の Day を自動計算します。未設定の場合は Day 1 として表示します。</div></div></section>
+<section class="card"><h2>最近の記録</h2><ul id="history" class="history"></ul></section>
+<section class="card"><h2>バックアップ</h2><div class="toolbar"><button class="secondary" onclick="copyBackup()">記録をコピー</button></div><p class="small">iPhone変更や万一に備えて、記録データをメモなどへ控えられます。</p><textarea id="backup" rows="4" readonly></textarea></section>
 </main>
 <script>
-const KEY='kinako-medication-v2';
-const initial={day:1,meds:[],daily:{},history:[]};
-function state(){try{return Object.assign({},initial,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return Object.assign({},initial)}}
+const KEY='kinako-medication-v3';
+const OLD_KEY='kinako-medication-v2';
+const TOTAL_DAYS=82;
+const initial={startDate:'',meds:[],recordsByDate:{},history:[]};
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function treatmentDay(start,date){if(!start)return 1;const s=new Date(`${start}T00:00:00`),t=new Date(`${date}T00:00:00`);if(Number.isNaN(s)||Number.isNaN(t))return 1;return Math.min(TOTAL_DAYS,Math.max(1,Math.floor((t-s)/86400000)+1))}
+function migrate(s){if(!s.recordsByDate)s.recordsByDate={};if(s.daily&&!s.recordsByDate[todayKey()])s.recordsByDate[todayKey()]=s.daily;delete s.daily;return s}
+function state(){try{const stored=localStorage.getItem(KEY)||localStorage.getItem(OLD_KEY)||'{}';return migrate(Object.assign({},initial,JSON.parse(stored)))}catch{return Object.assign({},initial)}}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
 const el=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){const s=state();el('day').textContent=Math.min(82,Math.max(1,Number(s.day)||1));const box=el('meds');box.innerHTML='';if(!s.meds.length){box.innerHTML='<div class="small">投薬予定がまだありません。「投薬予定を設定」から登録してください。</div>'}else s.meds.forEach((m,i)=>{const d=s.daily?.doses?.[i];const x=document.createElement('div');x.className='med';x.innerHTML=`<div class="row"><div><strong>${esc(m.time)}　${esc(m.name)}</strong><div class="small">${esc(m.form)}・${esc(m.dose)}</div><div class="${d?'ok':'danger'}">${d?'✅ 投薬済み — '+esc(d.user)+'（'+esc(d.time)+'）':'⬜ 未投薬'}</div></div><button ${d?'disabled':''} onclick="dose(${i})">${d?'投薬済み':'投薬した'}</button></div>`;box.appendChild(x)});const d=s.daily||{};el('weight').value=d.weight||'';el('temp').value=d.temp||'';el('appetite').value=d.appetite||'◎';el('energy').value=d.energy||'◎';el('memo').value=d.memo||'';el('history').innerHTML=(s.history||[]).slice(0,30).map(x=>`<li>${esc(x)}</li>`).join('')||'<li class="small">まだ記録はありません</li>'}
+function daily(s,date=todayKey()){s.recordsByDate=s.recordsByDate||{};s.recordsByDate[date]=s.recordsByDate[date]||{doses:{}};s.recordsByDate[date].doses=s.recordsByDate[date].doses||{};return s.recordsByDate[date]}
+function render(){const s=state();const date=todayKey();const d=daily(s,date);el('todayLabel').textContent=date;el('day').textContent=treatmentDay(s.startDate,date);el('startDate').value=s.startDate||'';const box=el('meds');box.innerHTML='';if(!s.meds.length){box.innerHTML='<div class="small">投薬予定がまだありません。「投薬予定を設定」から登録してください。</div>'}else s.meds.forEach((m,i)=>{const dose=d.doses?.[i];const x=document.createElement('div');x.className='med';x.innerHTML=`<div class="row"><div><strong>${esc(m.time)}　${esc(m.name)}</strong><div class="small">${esc(m.form)}・${esc(m.dose)}</div><div class="${dose?'ok':'danger'}">${dose?'投薬済み - '+esc(dose.user)+'（'+esc(dose.time)+'）':'未投薬'}</div></div><button ${dose?'disabled':''} onclick="recordDose(${i})">${dose?'投薬済み':'投薬した'}</button></div>`;box.appendChild(x)});el('weight').value=d.weight||'';el('temp').value=d.temp||'';el('appetite').value=d.appetite||'◎';el('energy').value=d.energy||'◎';el('memo').value=d.memo||'';el('history').innerHTML=(s.history||[]).slice(0,30).map(x=>`<li>${esc(x)}</li>`).join('')||'<li class="small">まだ記録はありません</li>';el('backup').value=JSON.stringify(s,null,2);save(s)}
 function addMed(){if(!el('medName').value.trim()||!el('dose').value.trim()||!el('schedule').value){alert('薬名・量・予定時刻を入力してください');return}const s=state();s.meds.push({name:el('medName').value.trim(),form:el('formType').value,dose:el('dose').value.trim(),time:el('schedule').value});save(s);el('medName').value='';el('dose').value='';el('schedule').value='';render()}
-function dose(i){const s=state();s.daily=s.daily||{};s.daily.doses=s.daily.doses||{};if(s.daily.doses[i]){alert('この投薬予定はすでに投薬済みです。二重記録を防ぐため変更しません。');return}const user=prompt('投薬した人の名前を入力してください');if(!user||!user.trim())return;const now=new Date();const time=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});s.daily.doses[i]={user:user.trim(),time};s.history=s.history||[];s.history.unshift(`${now.toLocaleDateString('ja-JP')} ${time} 投薬：${s.meds[i].name} ${s.meds[i].dose} — ${user.trim()}`);save(s);render()}
-function saveDaily(){const s=state();s.daily=s.daily||{};s.daily.weight=el('weight').value;s.daily.temp=el('temp').value;s.daily.appetite=el('appetite').value;s.daily.energy=el('energy').value;s.daily.memo=el('memo').value;save(s);el('saved').textContent='✅ この端末に保存しました';render()}
+function recordDose(i){const s=state();const date=todayKey();const d=daily(s,date);if(d.doses[i]){alert('この投薬予定は今日すでに投薬済みです。二重記録を防ぐため変更しません。');return}const user=prompt('投薬した人の名前を入力してください');if(!user||!user.trim())return;const now=new Date();const time=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});d.doses[i]={user:user.trim(),time,administeredAt:now.toISOString()};s.history=s.history||[];s.history.unshift(`${date} ${time} 投薬：${s.meds[i].name} ${s.meds[i].dose} - ${user.trim()}`);save(s);render()}
+function saveDaily(){const s=state();const d=daily(s);d.weight=el('weight').value;d.temp=el('temp').value;d.appetite=el('appetite').value;d.energy=el('energy').value;d.memo=el('memo').value;save(s);el('saved').textContent='この端末に保存しました';render()}
+function saveStartDate(){const s=state();s.startDate=el('startDate').value;save(s);render()}
+async function copyBackup(){el('backup').select();try{await navigator.clipboard.writeText(el('backup').value);alert('記録をコピーしました')}catch{document.execCommand('copy');alert('記録をコピーしました')}}
 render();
 </script>
 </body>
