@@ -12,20 +12,26 @@ as $$
 declare
   new_household_id uuid;
   new_pet public.pets;
+  normalized_pet_name text;
 begin
   if auth.uid() is null then
     raise exception 'Authentication required';
   end if;
 
+  normalized_pet_name := case
+    when pet_name is null or btrim(pet_name) = '' or pet_name = 'ミケ' then 'きなこ'
+    else pet_name
+  end;
+
   insert into public.households (name, created_by)
-  values (household_name, auth.uid())
+  values (coalesce(nullif(btrim(household_name), ''), 'FIP家族'), auth.uid())
   returning id into new_household_id;
 
   insert into public.household_members (household_id, user_id, role)
   values (new_household_id, auth.uid(), 'owner');
 
   insert into public.pets (name, species, treatment_target_days)
-  values (pet_name, 'cat', 82)
+  values (normalized_pet_name, 'cat', 82)
   returning * into new_pet;
 
   insert into public.pet_memberships (pet_id, household_id)
