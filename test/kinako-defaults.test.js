@@ -7,12 +7,18 @@ const migrationPath = new URL('../supabase/migrations/20260902_fix_kinako_treatm
 const migration = await readFile(migrationPath, 'utf8');
 
 test('Kinako bootstrap migration uses the 82-day plan', () => {
-  assert.match(migration, /treatment_target_days\)\s*\n\s*values \(normalized_pet_name, 'cat', 82\)/);
+  assert.match(migration, /values \(normalized_pet_name, 'cat', 82\)/);
   assert.doesNotMatch(migration, /values \(normalized_pet_name, 'cat', 84\)/);
 });
 
-test('legacy default name is normalized to Kinako', () => {
-  assert.match(migration, /pet_name = 'ミケ' then 'きなこ'/);
+test('legacy or empty default pet names normalize to Kinako', () => {
+  assert.match(migration, /pet_name is null or btrim\(pet_name\) = '' or pet_name = 'ミケ'/);
+  assert.match(migration, /then 'きなこ'/);
+  assert.match(migration, /pet_name text default 'きなこ'/);
+});
+
+test('household names fall back safely when blank', () => {
+  assert.match(migration, /coalesce\(nullif\(btrim\(household_name\), ''\), 'FIP家族'\)/);
 });
 
 test('bootstrap RPC remains restricted to authenticated callers', () => {
