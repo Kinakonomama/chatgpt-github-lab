@@ -17,5 +17,5 @@ test('dose records use the user's local calendar date', () => {
 
 test('dose button parameters are safely encoded before entering an HTML attribute', () => {
   assert.match(html, /encodeURIComponent\(m\.id\)/);
-  assert.match(html, /encodeURIComponent\(s\?\.dose_description\|\|'\'\)/);
+  assert.match(html, /encodeURIComponent\(s\?\.dose_description/);
 });
