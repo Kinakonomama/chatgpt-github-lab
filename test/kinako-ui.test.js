@@ -10,7 +10,7 @@ test('Kinako treatment progress is visible and uses the pet treatment target', (
   assert.match(html, /const target=Number\(currentPet\?\.treatment_target_days\)\|\|82/);
 });
 
-test('dose records use the user's local calendar date', () => {
+test("dose records use the user's local calendar date", () => {
   assert.match(html, /function localDateKey\(/);
   assert.match(html, /scheduledDate=localDateKey\(\)/);
 });
