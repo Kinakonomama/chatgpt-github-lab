@@ -13,8 +13,8 @@ test('Kinako treatment progress is visible and uses the pet treatment target', (
 test('treatment duration can be entered and saved per pet', () => {
   assert.match(html, /id="treatmentTargetDays"/);
   assert.match(html, /<input[^>]*id="treatmentTargetDays"[^>]*type="number"/);
-  assert.match(html, /treatment_target_days:Number\(\$\('treatmentTargetDays'\)\.value\)/);
-  assert.match(html, /\$\('treatmentTargetDays'\)\.value=currentPet\.treatment_target_days\|\|82/);
+  assert.match(html, /const targetDays=Number\(\$\('treatmentTargetDays'\)\.value\)/);
+  assert.match(html, /treatment_target_days:targetDays/);
 });
 
 test("dose records use the user's local calendar date", () => {
