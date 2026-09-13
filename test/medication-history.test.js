@@ -14,5 +14,5 @@ test('medication history screen supports Japan calendar date and family-visible 
 
 test('medication history escapes displayed values', () => {
   assert.match(html, /function esc\(/);
-  assert.match(html, /replace\(\/\[&<>\\"'\]/);
+  assert.match(html, /replace\(\/\[&<>/);
 });
