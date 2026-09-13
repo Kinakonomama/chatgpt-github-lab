@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>きなこ 投薬履歴</title>
+<style>
+body{margin:0;background:#f6f7f9;color:#202124;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}input,button{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;font:inherit}input{border:1px solid #d1d5db}button{border:0;background:#2563eb;color:#fff;font-weight:700;margin-top:8px}.muted{color:#6b7280;font-size:.9rem}.ok{color:#15803d;font-weight:700}.row{padding:14px 0;border-bottom:1px solid #e5e7eb}.row:last-child{border:0}.date{font-weight:700}
+</style>
+</head>
+<body>
+<main>
+<section class="card"><h1>🐱 きなこの投薬履歴</h1><p class="muted">家族で「いつ・何を・誰が投薬したか」を確認できます。</p><input id="date" type="date"><button onclick="loadHistory()">この日の履歴を見る</button><p id="message" class="muted"></p></section>
+<section class="card"><div id="history">読み込み中…</div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const client=supabase.createClient('https://vmqrfexbfvbzrdwlwsva.supabase.co','sb_publishable_tiCLfDC_HgwLhJoeoSfKlw_cXr9M5FV');
+const $=id=>document.getElementById(id);
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c))}
+async function loadHistory(){
+ const date=$('date').value||today();
+ $('date').value=date;
+ const {data,error}=await client.from('medication_logs').select('scheduled_date,administered_at,dose_description,status,medications(name,form)').eq('scheduled_date',date).order('administered_at',{ascending:true});
+ if(error){$('history').innerHTML='<p class="muted">履歴を読み込めませんでした。</p>';console.error(error);return}
+ const logs=data||[];
+ if(!logs.length){$('history').innerHTML='<p class="muted">この日の投薬記録はありません。</p>';return}
+ $('history').innerHTML=logs.map(log=>{const med=Array.isArray(log.medications)?log.medications[0]:log.medications;const parts=String(log.dose_description||'').split(' / ');const dose=parts.shift()||'';const who=parts.join(' / ')||'記録者未設定';const time=new Date(log.administered_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});return `<div class="row"><div class="date">${esc(time)}　${esc(med?.name||'薬')}</div><div>${esc(med?.form||'')}・${esc(dose)}</div><div class="ok">✅ ${esc(who)}</div></div>`}).join('');
+ $('message').textContent=`${date}：${logs.length}件の投薬記録`;
+}
+$('date').value=today();loadHistory();
+</script>
+</body>
+</html>
