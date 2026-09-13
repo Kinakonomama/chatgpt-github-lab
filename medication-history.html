@@ -3,15 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <title>きなこ 投薬履歴</title>
 <style>
-body{margin:0;background:#f6f7f9;color:#202124;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}input,button{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;font:inherit}input{border:1px solid #d1d5db}button{border:0;background:#2563eb;color:#fff;font-weight:700;margin-top:8px}.muted{color:#6b7280;font-size:.9rem}.ok{color:#15803d;font-weight:700}.row{padding:14px 0;border-bottom:1px solid #e5e7eb}.row:last-child{border:0}.date{font-weight:700}
+:root{--bg:#f6f7f9;--card:#fff;--text:#202124;--muted:#6b7280;--line:#e5e7eb;--accent:#0f766e;--ok:#15803d;--danger:#b91c1c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}header{background:#fff;border-bottom:1px solid var(--line);padding:15px 16px;position:sticky;top:0;z-index:2}header h1{max-width:760px;margin:auto;font-size:1.15rem}main{max-width:760px;margin:auto;padding:14px 14px 32px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}h2{font-size:1.05rem;margin:0 0 10px}.form{display:grid;gap:10px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{font-weight:600}input,select,button{width:100%;box-sizing:border-box;padding:11px;border-radius:10px;font:inherit}input,select{border:1px solid #d1d5db;background:#fff}button{border:0;background:var(--accent);color:#fff;font-weight:700;margin-top:2px}.secondary{background:#e5e7eb;color:#111827}.muted{color:var(--muted);font-size:.9rem}.ok{color:var(--ok);font-weight:700}.danger{color:var(--danger);font-weight:700}.row{padding:13px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.date{font-weight:700}.hidden{display:none!important}@media(max-width:520px){.formgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<header><h1>🐱 きなこの投薬履歴</h1></header>
 <main>
-<section class="card"><h1>🐱 きなこの投薬履歴</h1><p class="muted">家族で「いつ・何を・誰が投薬したか」を確認できます。</p><input id="date" type="date"><button onclick="loadHistory()">この日の履歴を見る</button><p id="message" class="muted"></p></section>
-<section class="card"><div id="history">読み込み中…</div></section>
+<section id="authCard" class="card">
+<h2>家族ログイン</h2>
+<p class="muted">ログインした家族だけが投薬履歴を確認・追加できます。</p>
+<div class="form"><label>メールアドレス<input id="email" type="email" autocomplete="email"></label><label>パスワード<input id="password" type="password" autocomplete="current-password"></label><div class="formgrid"><button onclick="signIn()">ログイン</button><button class="secondary" onclick="signUp()">新規登録</button></div><p id="authMessage" class="muted"></p></div>
+</section>
+<section id="app" class="hidden">
+<section class="card">
+<h2>📅 投薬履歴を見る</h2>
+<div class="form"><input id="date" type="date"><button onclick="loadHistory()">この日の履歴を見る</button><p id="message" class="muted"></p></div>
+</section>
+<section class="card">
+<h2>➕ 過去の投薬記録を追加</h2>
+<p class="muted">治療開始後の過去の日付を選んで、実際に投薬した内容を記録できます。投与量は獣医師の指示どおり入力してください。</p>
+<div class="form">
+<label>投薬日<input id="pastDate" type="date"></label>
+<div class="formgrid"><label>投薬時刻<input id="pastTime" type="time" value="08:00"></label><label>投薬した人<input id="pastWho" placeholder="例：ママ"></label></div>
+<label>薬<select id="pastMedication"><option value="">薬を読み込み中…</option></select></label>
+<label>投薬量<input id="pastDose" placeholder="例：1カプセル、1と1/4錠、0.5g"></label>
+<button onclick="addPastRecord()">過去の記録を保存</button>
+<p id="addMessage" class="muted"></p>
+</div>
+</section>
+<section class="card"><div id="history" class="muted">ログインすると履歴を表示します。</div></section>
+<section class="card"><button class="secondary" onclick="signOut()">ログアウト</button></section>
+</section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -19,17 +44,15 @@ const client=supabase.createClient('https://vmqrfexbfvbzrdwlwsva.supabase.co','s
 const $=id=>document.getElementById(id);
 function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c))}
-async function loadHistory(){
- const date=$('date').value||today();
- $('date').value=date;
- const {data,error}=await client.from('medication_logs').select('scheduled_date,administered_at,dose_description,status,medications(name,form)').eq('scheduled_date',date).order('administered_at',{ascending:true});
- if(error){$('history').innerHTML='<p class="muted">履歴を読み込めませんでした。</p>';console.error(error);return}
- const logs=data||[];
- if(!logs.length){$('history').innerHTML='<p class="muted">この日の投薬記録はありません。</p>';return}
- $('history').innerHTML=logs.map(log=>{const med=Array.isArray(log.medications)?log.medications[0]:log.medications;const parts=String(log.dose_description||'').split(' / ');const dose=parts.shift()||'';const who=parts.join(' / ')||'記録者未設定';const time=new Date(log.administered_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});return `<div class="row"><div class="date">${esc(time)}　${esc(med?.name||'薬')}</div><div>${esc(med?.form||'')}・${esc(dose)}</div><div class="ok">✅ ${esc(who)}</div></div>`}).join('');
- $('message').textContent=`${date}：${logs.length}件の投薬記録`;
-}
-$('date').value=today();loadHistory();
+function authMsg(text,cls='muted'){$('authMessage').textContent=text;$('authMessage').className=cls}
+async function signUp(){const email=$('email').value.trim(),password=$('password').value;if(!email||password.length<6){authMsg('メールアドレスと6文字以上のパスワードを入力してください。','danger');return}const {error}=await client.auth.signUp({email,password});if(error){authMsg(error.message,'danger');return}authMsg('確認メールを送信しました。確認後にログインしてください。','ok')}
+async function signIn(){const email=$('email').value.trim(),password=$('password').value;const {error}=await client.auth.signInWithPassword({email,password});if(error){authMsg(error.message,'danger');return}await initApp()}
+async function signOut(){await client.auth.signOut();location.reload()}
+async function initApp(){const {data}=await client.auth.getUser();if(!data.user)return;$('authCard').classList.add('hidden');$('app').classList.remove('hidden');$('date').value=today();$('pastDate').value=today();$('pastWho').value=data.user.email?.split('@')[0]||'';await loadMedications();await loadHistory()}
+async function loadMedications(){const {data,error}=await client.from('medications').select('id,name,form').order('created_at',{ascending:true});if(error){$('pastMedication').innerHTML='<option value="">薬を読み込めませんでした</option>';console.error(error);return}const meds=data||[];if(!meds.length){$('pastMedication').innerHTML='<option value="">先に薬を登録してください</option>';return}$('pastMedication').innerHTML=meds.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}（${esc(m.form||'')}）</option>`).join('')}
+async function loadHistory(){const {data:userData}=await client.auth.getUser();if(!userData.user)return;const date=$('date').value||today();$('date').value=date;const {data,error}=await client.from('medication_logs').select('scheduled_date,administered_at,dose_description,status,medications(name,form)').eq('scheduled_date',date).order('administered_at',{ascending:true});if(error){$('history').innerHTML='<p class="danger">履歴を読み込めませんでした。</p>';console.error(error);return}const logs=data||[];$('message').textContent=`${date}：${logs.length}件の投薬記録`;if(!logs.length){$('history').innerHTML='<p class="muted">この日の投薬記録はありません。</p>';return}$('history').innerHTML=logs.map(log=>{const med=Array.isArray(log.medications)?log.medications[0]:log.medications;const parts=String(log.dose_description||'').split(' / ');const dose=parts.shift()||'';const who=parts.join(' / ')||'記録者未設定';const time=new Date(log.administered_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});return `<div class="row"><div class="date">${esc(time)}　${esc(med?.name||'薬')}</div><div>${esc(med?.form||'')}・${esc(dose)}</div><div class="ok">✅ ${esc(who)}</div></div>`}).join('')}
+async function addPastRecord(){const date=$('pastDate').value,time=$('pastTime').value,medicationId=$('pastMedication').value,dose=$('pastDose').value.trim(),who=$('pastWho').value.trim();if(!date||!time||!medicationId||!dose||!who){$('addMessage').textContent='日付・時刻・薬・投薬量・記録者をすべて入力してください。';$('addMessage').className='danger';return}const {data:userData}=await client.auth.getUser();const user=userData.user;if(!user){$('addMessage').textContent='ログインしてください。';$('addMessage').className='danger';return}const existing=await client.from('medication_logs').select('id').eq('medication_id',medicationId).eq('scheduled_date',date).limit(1);if(existing.error){$('addMessage').textContent=existing.error.message;$('addMessage').className='danger';return}if(existing.data?.length){$('addMessage').textContent='この薬には同じ日付の記録があります。重複登録を避けるため保存しません。';$('addMessage').className='danger';return}const administeredAt=new Date(`${date}T${time}:00`);if(Number.isNaN(administeredAt.getTime())){return}const {error}=await client.from('medication_logs').insert({medication_id:medicationId,scheduled_date:date,administered_at:administeredAt.toISOString(),dose_description:`${dose} / ${who}`,status:'administered',administered_by:user.id});if(error){$('addMessage').textContent=error.message;$('addMessage').className='danger';return}$('addMessage').textContent='✅ 過去の投薬記録を保存しました。';$('addMessage').className='ok';$('date').value=date;$('pastDose').value='';await loadHistory()}
+(async()=>{const {data}=await client.auth.getSession();if(data.session)await initApp()})();
 </script>
 </body>
 </html>
