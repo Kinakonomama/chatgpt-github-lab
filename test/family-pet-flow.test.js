@@ -1,0 +1,11 @@
+const fs=require('fs');
+const index=fs.readFileSync('index.html','utf8');
+const history=fs.readFileSync('medication-history.html','utf8');
+const migration=fs.readFileSync('supabase/migrations/20260919_generic_pet_creation_defaults.sql','utf8');
+if(!index.includes('petSelector')||!index.includes('addNewPet')) throw new Error('main pet selector/add flow missing');
+if(!index.includes('medication-history.html')) throw new Error('history navigation missing');
+if(history.includes('.limit(1).maybeSingle()')) throw new Error('history must not force the first pet');
+if(!history.includes('medications!inner')||!history.includes('medications.pet_id')) throw new Error('history is not scoped to selected pet');
+if(migration.includes("then 'きなこ'")||migration.includes("then 'ミケ'")) throw new Error('pet creation migration still hardcodes Kinako');
+if(!migration.includes('treatment_target_days')||!migration.includes('82')) throw new Error('82-day default missing');
+console.log('family pet flow checks passed');
