@@ -8,7 +8,8 @@ test('medication history screen supports Japan calendar date and family-visible 
   assert.match(html, /type="date"/);
   assert.match(html, /scheduled_date/);
   assert.match(html, /administered_at/);
-  assert.match(html, /medications\(name,form\)/);
+  assert.match(html, /medications!inner\(name,form,pet_id\)/);
+  assert.match(html, /medications\.pet_id/);
   assert.match(html, /記録者未設定/);
 });
 
