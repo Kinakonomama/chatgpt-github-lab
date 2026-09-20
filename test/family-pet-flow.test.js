@@ -1,4 +1,4 @@
-const fs=require('fs');
+import fs from 'node:fs';
 const index=fs.readFileSync('index.html','utf8');
 const history=fs.readFileSync('medication-history.html','utf8');
 const migration=fs.readFileSync('supabase/migrations/20260919_generic_pet_creation_defaults.sql','utf8');
