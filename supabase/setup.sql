@@ -51,7 +51,7 @@ begin
   values (
     p_name,
     p_treatment_start_date,
-    84,
+    82,
     p_weight_kg,
     p_temperature_c
   )
