@@ -3,7 +3,10 @@
   "short_name": "FIP記録",
   "lang": "ja",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "description": "FIP治療中の猫の投薬・体調・検査記録を管理するアプリの試作版",
+  "description": "FIP治療中の猫の投薬・体調・検査記録を管理するアプリ",
+  "theme_color": "#ffffff",
+  "background_color": "#f6f7f9",
   "icons": []
 }
